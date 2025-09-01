@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fusion Economics Calculator | Rutherford Energy Ventures</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #001f3f;
+            color: #1e293b;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Atomic pattern background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #001f3f;
+            background-image: 
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150"><g opacity="0.6" fill="none" stroke="rgba(211,211,211,0.6)" stroke-width="1"><circle cx="75" cy="75" r="4" fill="rgba(211,211,211,0.4)"/><ellipse cx="75" cy="75" rx="25" ry="12" transform="rotate(0 75 75)"/><ellipse cx="75" cy="75" rx="35" ry="16" transform="rotate(60 75 75)"/><ellipse cx="75" cy="75" rx="30" ry="14" transform="rotate(120 75 75)"/><circle cx="50" cy="75" r="3" fill="rgba(211,211,211,0.4)"/><circle cx="100" cy="75" r="3" fill="rgba(211,211,211,0.4)"/><circle cx="75" cy="45" r="3" fill="rgba(211,211,211,0.4)"/><circle cx="75" cy="105" r="3" fill="rgba(211,211,211,0.4)"/><circle cx="95" cy="55" r="3" fill="rgba(211,211,211,0.4)"/><circle cx="55" cy="95" r="3" fill="rgba(211,211,211,0.4)"/></g></svg>');
+            background-size: 150px 150px;
+            background-repeat: repeat;
+            z-index: -1;
+        }
+        
+        .hero-section {
+            position: relative;
+            min-height: 500px;
+            background: linear-gradient(180deg, #001f3f 0%, #002855 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+            border-bottom: 3px solid #6366f1;
+        }
+        
+        /* Plasma effect */
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 50%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+            animation: plasmaRotate 30s linear infinite;
+        }
+        
+        @keyframes plasmaRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo {
+            width: 300px;
+            height: auto;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+        
+        h1 {
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+        }
+        
+        .subtitle {
+            font-size: 1.25rem;
+            font-weight: 400;
+            opacity: 0.9;
+            line-height: 1.5;
+            color: #e0e0e0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+        
+        .section-header p {
+            font-size: 1.125rem;
+            color: #e0e0e0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .input-section {
+            background: linear-gradient(135deg, #a5c9ea 0%, #7fb3d5 100%);
+            border-radius: 16px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 25px rgba(127, 179, 213, 0.3);
+        }
+        
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .input-group {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .input-group::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .input-group:hover::before {
+            left: 100%;
+        }
+        
+        .input-group:hover {
+            box-shadow: 0 8px 16px rgba(127, 179, 213, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            color: #000000;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        input[type="number"], input[type="range"] {
+            width: 100%;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            color: #000000;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="number"]:focus, input[type="range"]:focus {
+            outline: none;
+            border-color: #7fb3d5;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(127, 179, 213, 0.3);
+        }
+        
+        input[type="range"] {
+            padding: 0.25rem;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+        }
+        
+        input[type="range"]::-webkit-slider-track {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            border: 1px solid #d0d0d0;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: linear-gradient(135deg, #7fb3d5 0%, #a5c9ea 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            margin-top: -6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 8px rgba(127, 179, 213, 0.4);
+        }
+        
+        .range-value {
+            text-align: right;
+            color: #000000;
+            font-weight: 700;
+            margin-top: 0.5rem;
+        }
+        
+        .calculate-btn {
+            background: linear-gradient(135deg, #4169E1 0%, #1E90FF 100%);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 2rem auto;
+            display: block;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 20px rgba(65, 105, 225, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .calculate-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .calculate-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(65, 105, 225, 0.6);
+        }
+        
+        .results-section {
+            background: #2d5a2d;
+            border-radius: 16px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 25px rgba(45, 90, 45, 0.3);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .metric-card {
+            background: #90EE90;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .metric-card::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #90EE90, #98FB98, #90EE90, #98FB98);
+            border-radius: 12px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .metric-card:hover::after {
+            opacity: 0;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(144, 238, 144, 0.3);
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-label {
+            color: #013220;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+        
+        .plot-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            min-height: 450px;
+            position: relative;
+            border: 2px solid #a78bfa;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-title {
+            text-align: center;
+            color: #7c3aed;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .viability-conclusion {
+            background: #90EE90;
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .viability-conclusion.viable {
+            background: #90EE90;
+        }
+        
+        .viability-conclusion.viable .viability-title {
+            color: #008000;
+        }
+        
+        .viability-conclusion.marginal {
+            background: #90EE90;
+        }
+        
+        .viability-conclusion.marginal .viability-title {
+            color: #FF8C00;
+        }
+        
+        .viability-conclusion.not-viable {
+            background: #90EE90;
+        }
+        
+        .viability-conclusion.not-viable .viability-title {
+            color: #FF0000;
+        }
+        
+        .viability-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .viability-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+        
+        .viability-description {
+            font-size: 1.125rem;
+            color: #475569;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .viability-metrics {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 1.5rem;
+        }
+        
+        .viability-metric {
+            text-align: center;
+        }
+        
+        .viability-metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        
+        .viability-metric-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .section-header h2 {
+                font-size: 1.75rem;
+            }
+            
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-section">
+        <div class="hero-content">
+            <img src="REV.png" alt="REV Logo" class="logo" style="width: 300px; height: auto;">
+            <div id="fallback-message" style="display:none; color: #93c5fd; font-size: 0.9rem; margin-bottom: 1rem;">
+                (REV.png not found - using fallback logo)
+            </div>
+            <h1>Fusion Power Plant Economics Calculator</h1>
+            <p class="subtitle">Advanced techno-economic analysis tool based on Whyte et al., 2025, "Techno-Economic Analysis of Fusion Energy, Part 1: An Economic Lawson Criterion for Nth-of-a-Kind Technologies."</p>
+        </div>
+    </div>
+    
+    <!-- Audio elements -->
+    <audio id="kachingSound" preload="auto">
+        <source src="ka-ching.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="buzzerSound" preload="auto">
+        <source src="buzzer.mp3" type="audio/mpeg">
+    </audio>
+    
+    <div class="container">
+        <div class="section-header">
+            <h2>Configure Your Fusion Power Plant</h2>
+            <p>Adjust the parameters below to explore the economic viability of different fusion power plant designs</p>
+        </div>
+        
+        <div class="input-section">
+            <div class="input-grid">
+                <div class="input-group">
+                    <label for="pf_s">Areal Fusion Power Density (MW/m²)</label>
+                    <input type="range" id="pf_s_range" min="0.5" max="10" step="0.1" value="4.0">
+                    <input type="number" id="pf_s" min="0.5" max="10" step="0.1" value="4.0">
+                    <div class="range-value">4.0 MW/m²</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="tau_rep">Surface Replacement Time (years)</label>
+                    <input type="range" id="tau_rep_range" min="0" max="0.5" step="0.01" value="0.1">
+                    <input type="number" id="tau_rep" min="0" max="0.5" step="0.01" value="0.1">
+                    <div class="range-value">0.10 years</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="tau_life">FPP Lifetime (years)</label>
+                    <input type="range" id="tau_life_range" min="10" max="40" step="1" value="30">
+                    <input type="number" id="tau_life" min="10" max="40" step="1" value="30">
+                    <div class="range-value">30 years</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="poe">Price of Energy ($/MW-h)</label>
+                    <input type="range" id="poe_range" min="20" max="200" step="5" value="100">
+                    <input type="number" id="poe" min="20" max="200" step="5" value="100">
+                    <div class="range-value">$100/MW-h</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="xs">Surface Energy Fluence Limit (MW-y/m²)</label>
+                    <input type="range" id="xs_range" min="0.1" max="6" step="0.1" value="3.125">
+                    <input type="number" id="xs" min="0.1" max="6" step="0.1" value="3.125">
+                    <div class="range-value">3.125 MW-y/m²</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="eta_e">Net Conversion Efficiency</label>
+                    <input type="range" id="eta_e_range" min="0.1" max="0.6" step="0.01" value="0.4">
+                    <input type="number" id="eta_e" min="0.1" max="0.6" step="0.01" value="0.4">
+                    <div class="range-value">0.40</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="cy_target">Target Cost per Yield ($/MJ)</label>
+                    <input type="range" id="cy_target_range" min="0" max="0.01" step="0.0001" value="0">
+                    <input type="number" id="cy_target" min="0" max="0.01" step="0.0001" value="0">
+                    <div class="range-value">$0.0000/MJ</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="ms_s">Surface Replacement Cost (M$/m²)</label>
+                    <input type="range" id="ms_s_range" min="0" max="1" step="0.01" value="0.1">
+                    <input type="number" id="ms_s" min="0" max="1" step="0.01" value="0.1">
+                    <div class="range-value">0.10 M$/m²</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="ms_on">Overnight FPP Cost (M$/m²)</label>
+                    <input type="range" id="ms_on_range" min="3" max="20" step="0.1" value="10">
+                    <input type="number" id="ms_on" min="3" max="20" step="0.1" value="10">
+                    <div class="range-value">10.0 M$/m²</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="interest">Interest Rate (%)</label>
+                    <input type="range" id="interest_range" min="3" max="12" step="0.1" value="5">
+                    <input type="number" id="interest" min="3" max="12" step="0.1" value="5">
+                    <div class="range-value">5.0%</div>
+                </div>
+            </div>
+            
+            <button class="calculate-btn" onclick="calculate()">Calculate Economic Viability</button>
+            
+            <div style="text-align: center; margin-top: -1rem;">
+                <label style="color: #000000; font-size: 0.875rem; font-weight: normal; text-transform: none;">
+                    <input type="checkbox" id="muteSound" style="margin-right: 0.5rem;">
+                    Omit sound effects
+                </label>
+            </div>
+        </div>
+        
+        <div class="results-section" id="results" style="display: none;">
+            <div class="section-header">
+                <h2>Economic Analysis</h2>
+            </div>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value" id="qecon">-</div>
+                    <div class="metric-label">Q<sub>econ</sub></div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-value" id="utilization">-</div>
+                    <div class="metric-label">Utilization Factor</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-value" id="c_net">-</div>
+                    <div class="metric-label">Net Economic Rate (M$/m²-y)</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-value" id="c_on">-</div>
+                    <div class="metric-label">Overnight Cost ($/W)</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-value" id="lcoe">-</div>
+                    <div class="metric-label">LCOE<sub>eff</sub> ($/MW-h)</div>
+                </div>
+            </div>
+            
+            <div id="viability-message"></div>
+            
+            <div class="plot-container">
+                <div class="chart-title">Economic Gain vs Power Density</div>
+                <canvas id="chart1" width="800" height="400"></canvas>
+            </div>
+            
+            <div class="plot-container">
+                <div class="chart-title">Economic Rate Components</div>
+                <canvas id="chart2" width="800" height="400"></canvas>
+            </div>
+            
+            <div class="plot-container">
+                <div class="chart-title">Parameter Sensitivity Analysis</div>
+                <canvas id="chart3" width="800" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <footer style="background-color: #001f3f; color: #ffffff; text-align: center; padding: 2rem 0; margin-top: 4rem; font-size: 0.875rem; border-top: 1px solid #0d4f8b;">
+        <p style="margin: 0;">© 2025 by Rutherford Energy Ventures, All Rights Reserved</p>
+    </footer>
+    
+    <script>
+        // Sync range and number inputs
+        document.querySelectorAll('input[type="range"]').forEach(range => {
+            const id = range.id.replace('_range', '');
+            const number = document.getElementById(id);
+            const valueDisplay = range.parentElement.querySelector('.range-value');
+            
+            range.addEventListener('input', () => {
+                number.value = range.value;
+                updateValueDisplay(valueDisplay, range.value, id);
+            });
+            
+            number.addEventListener('input', () => {
+                range.value = number.value;
+                updateValueDisplay(valueDisplay, number.value, id);
+            });
+        });
+        
+        function updateValueDisplay(element, value, id) {
+            const val = parseFloat(value);
+            switch(id) {
+                case 'pf_s':
+                    element.textContent = `${val.toFixed(1)} MW/m²`;
+                    break;
+                case 'tau_rep':
+                case 'tau_life':
+                    element.textContent = `${val.toFixed(2)} years`;
+                    break;
+                case 'poe':
+                    element.textContent = `$${val.toFixed(0)}/MW-h`;
+                    break;
+                case 'xs':
+                    element.textContent = `${val.toFixed(3)} MW-y/m²`;
+                    break;
+                case 'eta_e':
+                    element.textContent = val.toFixed(2);
+                    break;
+                case 'cy_target':
+                    element.textContent = `$${val.toFixed(4)}/MJ`;
+                    break;
+                case 'ms_s':
+                case 'ms_on':
+                    element.textContent = `${val.toFixed(2)} M$/m²`;
+                    break;
+                case 'interest':
+                    element.textContent = `${val.toFixed(1)}%`;
+                    break;
+            }
+        }
+        
+        function drawLineChart(canvasId, data, options = {}) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Set up margins
+            const margin = { top: 40, right: 120, bottom: 60, left: 80 };
+            const chartWidth = width - margin.left - margin.right;
+            const chartHeight = height - margin.top - margin.bottom;
+            
+            // Find data ranges
+            let xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity;
+            data.forEach(series => {
+                series.x.forEach(x => {
+                    xMin = Math.min(xMin, x);
+                    xMax = Math.max(xMax, x);
+                });
+                series.y.forEach(y => {
+                    yMin = Math.min(yMin, y);
+                    yMax = Math.max(yMax, y);
+                });
+            });
+            
+            // Add padding
+            const xPadding = (xMax - xMin) * 0.1;
+            const yPadding = (yMax - yMin) * 0.1;
+            xMin -= xPadding;
+            xMax += xPadding;
+            yMin = Math.min(yMin - yPadding, -0.5);
+            yMax += yPadding;
+            
+            // Scale functions
+            const xScale = x => margin.left + (x - xMin) / (xMax - xMin) * chartWidth;
+            const yScale = y => margin.top + chartHeight - (y - yMin) / (yMax - yMin) * chartHeight;
+            
+            // Draw axes
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(margin.left, margin.top);
+            ctx.lineTo(margin.left, margin.top + chartHeight);
+            ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
+            ctx.stroke();
+            
+            // Draw grid lines
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.lineWidth = 1;
+            
+            // X grid
+            for (let i = 0; i <= 5; i++) {
+                const x = margin.left + (i / 5) * chartWidth;
+                ctx.beginPath();
+                ctx.moveTo(x, margin.top);
+                ctx.lineTo(x, margin.top + chartHeight);
+                ctx.stroke();
+            }
+            
+            // Y grid
+            for (let i = 0; i <= 5; i++) {
+                const y = margin.top + (i / 5) * chartHeight;
+                ctx.beginPath();
+                ctx.moveTo(margin.left, y);
+                ctx.lineTo(margin.left + chartWidth, y);
+                ctx.stroke();
+            }
+            
+            // Draw data with glow effect
+            data.forEach((series, idx) => {
+                // Glow effect
+                ctx.shadowColor = series.color || ['#00ffff', '#ff00ff', '#00ff00'][idx];
+                ctx.shadowBlur = 10;
+                ctx.strokeStyle = series.color || ['#00ffff', '#ff00ff', '#00ff00'][idx];
+                ctx.lineWidth = series.lineWidth || 3;
+                ctx.beginPath();
+                
+                for (let i = 0; i < series.x.length; i++) {
+                    const x = xScale(series.x[i]);
+                    const y = yScale(series.y[i]);
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+                
+                // Draw label
+                if (series.name) {
+                    ctx.fillStyle = series.color || ['#00ffff', '#ff00ff', '#00ff00'][idx];
+                    ctx.font = '14px -apple-system, BlinkMacSystemFont, Segoe UI, Arial';
+                    const labelX = margin.left + chartWidth + 10;
+                    const labelY = margin.top + 20 + idx * 25;
+                    ctx.fillText(series.name, labelX, labelY);
+                }
+            });
+            
+            // Draw axes labels
+            ctx.fillStyle = '#000000';
+            ctx.font = '16px -apple-system, BlinkMacSystemFont, Segoe UI, Arial';
+            ctx.textAlign = 'center';
+            
+            // X axis label
+            if (options.xLabel) {
+                ctx.fillText(options.xLabel, margin.left + chartWidth / 2, height - 10);
+            }
+            
+            // Y axis label
+            if (options.yLabel) {
+                ctx.save();
+                ctx.translate(20, margin.top + chartHeight / 2);
+                ctx.rotate(-Math.PI / 2);
+                ctx.fillText(options.yLabel, 0, 0);
+                ctx.restore();
+            }
+            
+            // Draw axis values
+            ctx.font = '12px -apple-system, BlinkMacSystemFont, Segoe UI, Arial';
+            ctx.fillStyle = '#000000';
+            
+            // X axis values
+            for (let i = 0; i <= 5; i++) {
+                const val = xMin + (i / 5) * (xMax - xMin);
+                const x = margin.left + (i / 5) * chartWidth;
+                ctx.textAlign = 'center';
+                ctx.fillText(val.toFixed(1), x, margin.top + chartHeight + 20);
+            }
+            
+            // Y axis values
+            for (let i = 0; i <= 5; i++) {
+                const val = yMin + (i / 5) * (yMax - yMin);
+                const y = margin.top + chartHeight - (i / 5) * chartHeight;
+                ctx.textAlign = 'right';
+                ctx.fillText(val.toFixed(2), margin.left - 10, y + 5);
+            }
+            
+            // Draw special lines
+            if (options.horizontalLine) {
+                ctx.strokeStyle = '#ff6666';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([8, 4]);
+                const y = yScale(options.horizontalLine);
+                ctx.beginPath();
+                ctx.moveTo(margin.left, y);
+                ctx.lineTo(margin.left + chartWidth, y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Label for Q_econ = 1
+                ctx.fillStyle = '#ff6666';
+                ctx.font = '12px -apple-system, BlinkMacSystemFont, Segoe UI, Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText('Q_econ = 1', margin.left + chartWidth + 5, y + 4);
+            }
+            
+            // Draw current point
+            if (options.currentPoint) {
+                const x = xScale(options.currentPoint.x);
+                const y = yScale(options.currentPoint.y);
+                ctx.fillStyle = '#ff6666';
+                ctx.shadowColor = '#ff6666';
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.arc(x, y, 6, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#00ffff';
+                ctx.font = '12px -apple-system, BlinkMacSystemFont, Segoe UI, Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText('Current', x + 10, y - 10);
+            }
+        }
+        
+        function drawBarChart(canvasId, labels, values, colors) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Set up margins
+            const margin = { top: 40, right: 40, bottom: 80, left: 80 };
+            const chartWidth = width - margin.left - margin.right;
+            const chartHeight = height - margin.top - margin.bottom;
+            
+            // Find data range
+            const maxVal = Math.max(...values.map(Math.abs));
+            const minVal = Math.min(...values);
+            const range = maxVal - minVal;
+            
+            // Calculate bar width
+            const barWidth = chartWidth / labels.length * 0.6;
+            const barSpacing = chartWidth / labels.length;
+            
+            // Draw axes
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(margin.left, margin.top);
+            ctx.lineTo(margin.left, margin.top + chartHeight);
+            ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
+            ctx.stroke();
+            
+            // Draw zero line if needed
+            if (minVal < 0) {
+                const zeroY = margin.top + chartHeight - (0 - minVal) / range * chartHeight;
+                ctx.strokeStyle = '#666';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                ctx.moveTo(margin.left, zeroY);
+                ctx.lineTo(margin.left + chartWidth, zeroY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+            
+            // Draw bars with glow
+            values.forEach((value, idx) => {
+                const x = margin.left + idx * barSpacing + (barSpacing - barWidth) / 2;
+                const barHeight = Math.abs(value) / range * chartHeight;
+                const y = value >= 0 
+                    ? margin.top + chartHeight - (value - minVal) / range * chartHeight
+                    : margin.top + chartHeight - (0 - minVal) / range * chartHeight;
+                
+                // Add glow effect
+                ctx.shadowColor = colors[idx];
+                ctx.shadowBlur = 10;
+                ctx.fillStyle = colors[idx];
+                ctx.fillRect(x, value >= 0 ? y : y, barWidth, value >= 0 ? barHeight : -barHeight);
+                ctx.shadowBlur = 0;
+                
+                // Draw value on top of bar
+                ctx.fillStyle = '#000000';
+                ctx.font = '12px -apple-system, BlinkMacSystemFont, Segoe UI, Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(value.toFixed(2), x + barWidth / 2, y - 5);
+            });
+            
+            // Draw labels
+            ctx.fillStyle = '#000000';
+            ctx.font = '14px -apple-system, BlinkMacSystemFont, Segoe UI, Arial';
+            ctx.textAlign = 'center';
+            labels.forEach((label, idx) => {
+                const x = margin.left + idx * barSpacing + barSpacing / 2;
+                ctx.save();
+                ctx.translate(x, margin.top + chartHeight + 20);
+                ctx.rotate(-Math.PI / 4);
+                ctx.textAlign = 'right';
+                ctx.fillText(label, 0, 0);
+                ctx.restore();
+            });
+            
+            // Y axis label
+            ctx.save();
+            ctx.fillStyle = '#000000';
+            ctx.font = '14px -apple-system, BlinkMacSystemFont, Segoe UI, Arial';
+            ctx.translate(20, margin.top + chartHeight / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.textAlign = 'center';
+            ctx.fillText('M$/m²-y', 0, 0);
+            ctx.restore();
+            
+            // Y axis values
+            ctx.font = '12px -apple-system, BlinkMacSystemFont, Segoe UI, Arial';
+            ctx.fillStyle = '#000000';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 5; i++) {
+                const val = minVal + (i / 5) * range;
+                const y = margin.top + chartHeight - (i / 5) * chartHeight;
+                ctx.fillText(val.toFixed(2), margin.left - 10, y + 5);
+            }
+        }
+        
+        function drawHorizontalBarChart(canvasId, labels, values, colors) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Set up margins
+            const margin = { top: 40, right: 40, bottom: 60, left: 120 };
+            const chartWidth = width - margin.left - margin.right;
+            const chartHeight = height - margin.top - margin.bottom;
+            
+            // Find data range
+            const maxVal = Math.max(...values.map(Math.abs));
+            const minVal = Math.min(...values);
+            const range = maxVal - minVal;
+            
+            // Calculate bar height
+            const barHeight = chartHeight / labels.length * 0.6;
+            const barSpacing = chartHeight / labels.length;
+            
+            // Draw axes
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(margin.left, margin.top);
+            ctx.lineTo(margin.left, margin.top + chartHeight);
+            ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
+            ctx.stroke();
+            
+            // Draw vertical zero line
+            const zeroX = margin.left + (0 - minVal) / range * chartWidth;
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(zeroX, margin.top);
+            ctx.lineTo(zeroX, margin.top + chartHeight);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Draw bars
+            values.forEach((value, idx) => {
+                const y = margin.top + idx * barSpacing + (barSpacing - barHeight) / 2;
+                const barWidth = Math.abs(value) / range * chartWidth;
+                const x = value >= 0 ? zeroX : zeroX - barWidth;
+                
+                // Add glow effect
+                ctx.shadowColor = colors[idx];
+                ctx.shadowBlur = 10;
+                ctx.fillStyle = colors[idx];
+                ctx.fillRect(x, y, barWidth, barHeight);
+                ctx.shadowBlur = 0;
+                
+                // Draw value
+                ctx.fillStyle = '#000000';
+                ctx.font = '12px -apple-system, BlinkMacSystemFont, Segoe UI, Arial';
+                ctx.textAlign = value >= 0 ? 'left' : 'right';
+                ctx.fillText(value.toFixed(1) + '%', x + (value >= 0 ? barWidth + 5 : -5), y + barHeight / 2 + 5);
+            });
+            
+            // Draw labels
+            ctx.fillStyle = '#000000';
+            ctx.font = '14px -apple-system, BlinkMacSystemFont, Segoe UI, Arial';
+            ctx.textAlign = 'right';
+            labels.forEach((label, idx) => {
+                const y = margin.top + idx * barSpacing + barSpacing / 2;
+                ctx.fillText(label, margin.left - 10, y + 5);
+            });
+            
+            // X axis label
+            ctx.fillStyle = '#000000';
+            ctx.font = '14px -apple-system, BlinkMacSystemFont, Segoe UI, Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('% Change in Q_econ', margin.left + chartWidth / 2, height - 20);
+            
+            // X axis values
+            ctx.font = '12px -apple-system, BlinkMacSystemFont, Segoe UI, Arial';
+            ctx.fillStyle = '#000000';
+            ctx.textAlign = 'center';
+            for (let i = 0; i <= 5; i++) {
+                const val = minVal + (i / 5) * range;
+                const x = margin.left + (i / 5) * chartWidth;
+                ctx.fillText(val.toFixed(0) + '%', x, margin.top + chartHeight + 20);
+            }
+        }
+        
+        function calculate() {
+            // Get input values
+            const params = {
+                pf_s: parseFloat(document.getElementById('pf_s').value),
+                tau_rep: parseFloat(document.getElementById('tau_rep').value),
+                tau_life: parseFloat(document.getElementById('tau_life').value),
+                poe: parseFloat(document.getElementById('poe').value),
+                xs: parseFloat(document.getElementById('xs').value),
+                eta_e: parseFloat(document.getElementById('eta_e').value),
+                cy_target: parseFloat(document.getElementById('cy_target').value),
+                ms_s: parseFloat(document.getElementById('ms_s').value),
+                ms_on: parseFloat(document.getElementById('ms_on').value),
+                interest: parseFloat(document.getElementById('interest').value)
+            };
+            
+            // Calculate utilization factor
+            const U = 1 / (1 + (params.pf_s * params.tau_rep / params.xs));
+            
+            // Calculate economic rates
+            const C_gain = 8.76e-3 * params.poe * params.eta_e * params.pf_s * U;
+            const C_target = 31.5 * params.cy_target * params.pf_s * U;
+            const C_s_rep = params.ms_s * (params.pf_s / params.xs) * U;
+            
+            const i_decimal = params.interest / 100;
+            const C_cf = params.ms_on * (i_decimal * Math.pow(1 + i_decimal, params.tau_life)) / 
+                         (Math.pow(1 + i_decimal, params.tau_life) - 1);
+            
+            const C_net = C_gain - C_target - C_s_rep - C_cf;
+            const Q_econ = C_gain / (C_target + C_s_rep + C_cf);
+            const c_on = params.ms_on / (params.pf_s * params.eta_e);
+            const lcoe_eff = params.poe / Q_econ;
+            
+            // Update results
+            document.getElementById('qecon').textContent = Q_econ.toFixed(2);
+            document.getElementById('utilization').textContent = (U * 100).toFixed(1) + '%';
+            document.getElementById('c_net').textContent = C_net.toFixed(3);
+            document.getElementById('c_on').textContent = c_on.toFixed(1);
+            document.getElementById('lcoe').textContent = lcoe_eff.toFixed(1);
+            
+            // Viability message
+            const messageDiv = document.getElementById('viability-message');
+            const muteSound = document.getElementById('muteSound').checked;
+            
+            if (Q_econ >= 1.5 && U >= 0.8) {
+                // Play ka-ching sound for viable design (if not muted)
+                if (!muteSound) {
+                    const kachingSound = document.getElementById('kachingSound');
+                    kachingSound.play().catch(e => console.log('Audio play failed:', e));
+                }
+                
+                messageDiv.innerHTML = `
+                    <div class="viability-conclusion viable">
+                        <div class="viability-icon">✅</div>
+                        <h3 class="viability-title">Economically Viable Design</h3>
+                        <p class="viability-description">
+                            Your fusion power plant design shows strong economic potential with excellent returns 
+                            and high utilization. This configuration would be attractive to investors and could 
+                            compete effectively in energy markets.
+                        </p>
+                        <div class="viability-metrics">
+                            <div class="viability-metric">
+                                <div class="viability-metric-value">${Q_econ.toFixed(2)}</div>
+                                <div class="viability-metric-label">Q_econ</div>
+                            </div>
+                            <div class="viability-metric">
+                                <div class="viability-metric-value">${(U * 100).toFixed(1)}%</div>
+                                <div class="viability-metric-label">Utilization</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (Q_econ >= 1) {
+                messageDiv.innerHTML = `
+                    <div class="viability-conclusion marginal">
+                        <div class="viability-icon">⚠️</div>
+                        <h3 class="viability-title">Marginally Viable Design</h3>
+                        <p class="viability-description">
+                            Your fusion power plant design meets minimum economic viability requirements but has 
+                            limited profit margins. Consider optimizing parameters to improve returns and reduce 
+                            investment risk.
+                        </p>
+                        <div class="viability-metrics">
+                            <div class="viability-metric">
+                                <div class="viability-metric-value">${Q_econ.toFixed(2)}</div>
+                                <div class="viability-metric-label">Q_econ</div>
+                            </div>
+                            <div class="viability-metric">
+                                <div class="viability-metric-value">${(U * 100).toFixed(1)}%</div>
+                                <div class="viability-metric-label">Utilization</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Play buzzer sound for non-viable design (if not muted)
+                if (!muteSound) {
+                    const buzzerSound = document.getElementById('buzzerSound');
+                    buzzerSound.play().catch(e => console.log('Audio play failed:', e));
+                }
+                
+                messageDiv.innerHTML = `
+                    <div class="viability-conclusion not-viable">
+                        <div class="viability-icon">❌</div>
+                        <h3 class="viability-title">Not Economically Viable</h3>
+                        <p class="viability-description">
+                            This fusion power plant design would operate at a loss. The economic gain factor 
+                            is below 1.0, meaning costs exceed revenues. Significant improvements in power density, 
+                            efficiency, or cost structure are needed.
+                        </p>
+                        <div class="viability-metrics">
+                            <div class="viability-metric">
+                                <div class="viability-metric-value">${Q_econ.toFixed(2)}</div>
+                                <div class="viability-metric-label">Q_econ</div>
+                            </div>
+                            <div class="viability-metric">
+                                <div class="viability-metric-value">${(U * 100).toFixed(1)}%</div>
+                                <div class="viability-metric-label">Utilization</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Create plots
+            createPlots(params, U, Q_econ, C_gain, C_target, C_s_rep, C_cf);
+            
+            // Show results
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function createPlots(params, U, Q_econ, C_gain, C_target, C_s_rep, C_cf) {
+            // Plot 1: Q_econ vs Power Density
+            const pf_s_range = [];
+            const q_econ_values = [];
+            const u_values = [];
+            
+            for (let pf = 0.5; pf <= 10; pf += 0.1) {
+                pf_s_range.push(pf);
+                const u = 1 / (1 + (pf * params.tau_rep / params.xs));
+                u_values.push(u);
+                
+                const c_gain = 8.76e-3 * params.poe * params.eta_e * pf * u;
+                const c_target = 31.5 * params.cy_target * pf * u;
+                const c_s_rep = params.ms_s * (pf / params.xs) * u;
+                const i_decimal = params.interest / 100;
+                const c_cf = params.ms_on * (i_decimal * Math.pow(1 + i_decimal, params.tau_life)) / 
+                            (Math.pow(1 + i_decimal, params.tau_life) - 1);
+                
+                const q = c_gain / (c_target + c_s_rep + c_cf);
+                q_econ_values.push(q);
+            }
+            
+            drawLineChart('chart1', [
+                { x: pf_s_range, y: q_econ_values, name: 'Q_econ', color: '#7c3aed' },
+                { x: pf_s_range, y: u_values.map(u => u * 5), name: 'Utilization (×5)', color: '#f59e0b' }
+            ], {
+                xLabel: 'Areal Fusion Power Density (MW/m²)',
+                yLabel: 'Q_econ / Utilization',
+                horizontalLine: 1,
+                currentPoint: { x: params.pf_s, y: Q_econ }
+            });
+            
+            // Plot 2: Economic Components
+            const components = ['Gain', 'Target Cost', 'S Replace', 'Construction'];
+            const values = [C_gain, -C_target, -C_s_rep, -C_cf];
+            const colors = ['#10b981', '#ef4444', '#f59e0b', '#a855f7'];
+            
+            drawBarChart('chart2', components, values, colors);
+            
+            // Plot 3: Sensitivity Analysis
+            const param_names = ['POE', 'η_E', 'X_S', '(M$/S)_S', 'Interest'];
+            const sensitivities = [];
+            
+            // Calculate sensitivity to ±20% change
+            const base_q = Q_econ;
+            const changes = [
+                { ...params, poe: params.poe * 1.2 },
+                { ...params, eta_e: params.eta_e * 1.2 },
+                { ...params, xs: params.xs * 1.2 },
+                { ...params, ms_s: params.ms_s * 0.8 },
+                { ...params, interest: params.interest * 0.8 }
+            ];
+            
+            changes.forEach(p => {
+                const u = 1 / (1 + (p.pf_s * p.tau_rep / p.xs));
+                const c_gain = 8.76e-3 * p.poe * p.eta_e * p.pf_s * u;
+                const c_target = 31.5 * p.cy_target * p.pf_s * u;
+                const c_s_rep = p.ms_s * (p.pf_s / p.xs) * u;
+                const i_d = p.interest / 100;
+                const c_cf = p.ms_on * (i_d * Math.pow(1 + i_d, p.tau_life)) / 
+                            (Math.pow(1 + i_d, p.tau_life) - 1);
+                
+                const q = c_gain / (c_target + c_s_rep + c_cf);
+                sensitivities.push((q - base_q) / base_q * 100);
+            });
+            
+            const sensitivityColors = sensitivities.map(s => s > 0 ? '#10b981' : '#ef4444');
+            drawHorizontalBarChart('chart3', param_names, sensitivities, sensitivityColors);
+        }
+        
+        // Calculate on load with default values
+        window.addEventListener('load', () => {
+            // Page will load at the top, calculation only happens when button is clicked
+        });
+    </script>
+</body>
+</html>

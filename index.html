@@ -222,6 +222,58 @@
 .plot-reset:hover{ background:#eef2f7; }
 </style>
 
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+
+<style id="plotly-overlay-css">
+  .plot-wrap { position: relative; }
+  #plotlyOverlay { position: absolute; inset: 0; }
+  /* Keep reset button pinned to upper-right of the plot */
+  .plot-reset { position: absolute; top: 8px; right: 8px; z-index: 10; }
+</style>
+
+
+<style id="controls-split-override">
+  .controls{display:grid; grid-template-columns:repeat(4,1fr); gap:8px}
+  .controls .break{grid-column:1 / -1;}
+</style>
+
+
+<style id="tooltip-css">
+  [data-tooltip]{ position: relative; }
+  [data-tooltip]::after{
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translate(-50%, calc(-100% - 8px));
+    background: rgba(17,17,17,.92);
+    color: #fff;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .12s ease 0s;
+    z-index: 9999;
+  }
+  [data-tooltip]::before{
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: -8px;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-top: none;
+    border-bottom-color: rgba(17,17,17,.92);
+    opacity: 0;
+    transition: opacity .12s ease 0s;
+    z-index: 9999;
+  }
+  [data-tooltip]:hover::after,
+  [data-tooltip]:hover::before{ opacity: 1;  transition-delay: .35s; }
+</style>
 </head>
 <body>
   <header class="site-header">
@@ -335,14 +387,14 @@
       </div>
 
       <div class="btns">
-        <button id="btnQ">Compute Qecon(x)</button>
-        <button id="btnProj">Full projection to all targets</button>
+        <button id="btnQ" data-tooltip="Compute Qecon(x) for the current parameter set">Compute Qecon(x)</button>
+        <button id="btnProj" data-tooltip="Full projection to all targets (compute projected points)">Full projection to all targets</button>
         <button id="btnReset">Reset to nominal</button>
-        <button id="btnExport">Export JSON</button>
+        <button id="btnExport" data-tooltip="Export current parameter set and settings as JSON">Export JSON</button>
         <input type="file" id="fileImport" accept=".json" style="display:none"/>
-        <button id="btnImport">Import JSON</button>
-        <button id="btnApplyJSON">Apply JSON (from box)</button>
-        <button id="btnExportCSV">Export projections CSV</button>
+        <button id="btnImport" data-tooltip="Import JSON from a file (opens file chooser)">Import JSON</button>
+        <button id="btnApplyJSON" data-tooltip="Apply JSON from the textbox to the app">Apply JSON (from box)</button>
+        <button id="btnExportCSV" data-tooltip="Export projection results as a CSV file">Export projections CSV</button>
       </div>
 
       <div style="margin-top:8px">
@@ -370,21 +422,23 @@
         <div><label for="resSelect">Resolution</label>
           <select id="resSelect"><option value="64">64×64</option><option value="96" selected>96×96</option><option value="128">128×128</option></select>
         </div>
+        <div class="break"></div>
         <div><label for="xmin">X min</label><input id="xmin" type="number" step="any" value="0.5"></div>
         <div><label for="xmax">X max</label><input id="xmax" type="number" step="any" value="6"></div>
         <div><label for="ymin">Y min</label><input id="ymin" type="number" step="any" value="0.5"></div>
         <div><label for="ymax">Y max</label><input id="ymax" type="number" step="any" value="6"></div>
+        <div class="break"></div>
         <div><label for="contoursInput">Contour Q levels</label><input id="contoursInput" type="text" value="1.0, 1.5, 2.0"></div>
       </div>
       <div class="legend" id="legend"></div>
       <div class="toolbar">
-        <button id="btnDownloadPNG">Download PNG</button>
+        <button id="btnDownloadPNG" title="Download the current plot as a PNG image" aria-label="Download the current plot as a PNG image" data-tooltip="Download the current plot as a PNG image">Download PNG</button>
         <span class="small">
-          <button id="btnAxesPfS_XS" class="linklike" type="button">Pf/S vs XS</button>
+          <button id="btnAxesPfS_XS" class="linklike" type="button" title="Quick axes: set X = Pf/S and Y = XS; updates bounds" aria-label="Quick axes: set X = Pf/S and Y = XS; updates bounds" data-tooltip="Quick axes: X = Pf/S, Y = XS; updates bounds">Pf/S vs XS</button>
           •
-          <button id="btnAxesPfS_tau" class="linklike" type="button">Pf/S vs τrep</button> </span>
+          <button id="btnAxesPfS_tau" class="linklike" type="button" title="Quick axes: set X = Pf/S and Y = tau_rep; updates bounds" aria-label="Quick axes: set X = Pf/S and Y = tau_rep; updates bounds" data-tooltip="Quick axes: X = τrep; updates bounds">Pf/S vs τrep</button> </span>
       </div>
-      <div class="plot-wrap"><button id="btnResetView" class="plot-reset" type="button" title="Reset view to defaults">Reset view</button><canvas id="plot" width="820" height="520"></canvas></div>
+      <div class="plot-wrap"><button id="btnResetView" class="plot-reset" type="button" title="Reset view to defaults" data-tooltip="Reset view: fit axes to include all points and contours">Reset view</button><canvas id="plot" width="820" height="520"></canvas><div id="plotlyOverlay" class="plotly-overlay"></div></div>
     </section>
   </main>
 
@@ -1323,7 +1377,8 @@ function downloadPNG() {
 document.getElementById('btnQ').addEventListener('click', renderX);
 document.getElementById('btnProj').addEventListener('click', fullProjection);
 document.getElementById('btnReset').addEventListener('click', () => {
-  setParams(PARAMS.map(p => p.nominal));
+  const p = PRESETS['nominal'];
+  setParams([p.PfS, p.tau_rep, p.tau_life, p.POE, p.XS, p.etaE, p.cY, p.MS_S, p.MS_ON, p.iRate]);
   PARAMS.forEach(p => {
     document.getElementById(p.lock).checked = false;
     document.getElementById(p.w).value = 1;
@@ -1520,5 +1575,216 @@ document.addEventListener('DOMContentLoaded', function(){
 })();
 </script>
 
+
+<script id="plotly-overlay-script">
+(function(){
+  // Safety: run after the app has defined scheduleDraw, etc.
+  function ensureReady(){
+    return (typeof window.scheduleDraw === 'function' &&
+            typeof window.readParams === 'function' &&
+            typeof window.Qecon === 'function' &&
+            typeof window.projectToTarget === 'function');
+  }
+  function parseLevels(){
+    var raw = (document.getElementById('contoursInput')||{}).value || '';
+    var arr = raw.split(',').map(function(s){ return parseFloat(s.trim()); }).filter(function(v){ return isFinite(v) && v>0; });
+    if (!arr.some(function(v){ return Math.abs(v-1.0) < 1e-9; })) arr.push(1.0);
+    var uniq = Array.from(new Set(arr)).sort(function(a,b){ return a-b; });
+    return uniq;
+  }
+  function renderPlotlyFromState(autoFit){
+    var div = document.getElementById('plotlyOverlay');
+    if (!div || !window.Plotly) return;
+
+    var xp = document.getElementById('xParam').value;
+    var yp = document.getElementById('yParam').value;
+    if (xp === yp) { Plotly.purge(div); return; }
+
+    // Typed bounds
+    var xmin = parseFloat(document.getElementById('xmin').value);
+    var xmax = parseFloat(document.getElementById('xmax').value);
+    var ymin = parseFloat(document.getElementById('ymin').value);
+    var ymax = parseFloat(document.getElementById('ymax').value);
+    if (!(xmax>xmin && ymax>ymin)) { Plotly.purge(div); return; }
+
+    var base = readParams();
+    var keyIndex = Object.fromEntries(PARAMS.map(function(p,i){ return [p.key, i]; }));
+    var xi = keyIndex[xp], yi = keyIndex[yp];
+    var N = parseInt((document.getElementById('resSelect')||{}).value || '96', 10) || 96;
+
+    // Targets/levels
+    var levels = parseLevels();
+
+    // Current and projected points
+    var lockMask = readLocks();
+    var wUser = readWeights();
+    var utilOpt = readUtilConstraint();
+    var curX = base[xi], curY = base[yi];
+    var xMinPts = curX, xMaxPts = curX, yMinPts = curY, yMaxPts = curY;
+    var projTraces = [];
+    levels.forEach(function(T){
+      try {
+        var y = projectToTarget(base, T, wUser, lockMask, utilOpt, true);
+        var px = y[xi], py = y[yi];
+        if (isFinite(px) && isFinite(py)){
+          xMinPts = Math.min(xMinPts, px); xMaxPts = Math.max(xMaxPts, px);
+          yMinPts = Math.min(yMinPts, py); yMaxPts = Math.max(yMaxPts, py);
+          projTraces.push({type:'scatter', mode:'markers', name:'Projection Q='+T, x:[px], y:[py], marker:{symbol:'x', size:10},
+            hovertemplate:'Q='+T+'<br>"+xp+": %{x:.4g}<br>"+yp+": %{y:.4g}<extra></extra>'});
+        }
+      } catch(e){}
+    });
+
+    // Decide final ranges
+    var fxmin = xmin, fxmax = xmax, fymin = ymin, fymax = ymax;
+    if (autoFit){
+      var pxmin = Math.min(xMinPts, xmin), pxmax = Math.max(xMaxPts, xmax);
+      var pymin = Math.min(yMinPts, ymin), pymax = Math.max(yMaxPts, ymax);
+      var dx = Math.max(1e-12, pxmax - pxmin), dy = Math.max(1e-12, pymax - pymin);
+      var pad = 0.08;
+      fxmin = Math.min(xmin, pxmin - pad*dx);
+      fxmax = Math.max(xmax, pxmax + pad*dx);
+      fymin = Math.min(ymin, pymin - pad*dy);
+      fymax = Math.max(ymax, pymax + pad*dy);
+    }
+
+    // Build grid over final ranges to avoid white space
+    var xs = Array.from({length:N}, function(_,i){ return fxmin + (fxmax - fxmin)*i/(N-1); });
+    var ys = Array.from({length:N}, function(_,j){ return fymin + (fymax - fymin)*j/(N-1); });
+    var z = new Array(ys.length);
+    for (var j=0;j<ys.length;j++){
+      var row = new Array(xs.length);
+      for (var i=0;i<xs.length;i++){
+        var p = base.slice(); p[xi]=xs[i]; p[yi]=ys[j];
+        row[i] = Qecon(p);
+      }
+      z[j] = row;
+    }
+
+    var heat = {type:'heatmap', x:xs, y:ys, z:z, showscale:true, colorbar:{title:'Qecon'},
+      hovertemplate: xp+': %{x:.4g}<br>'+yp+': %{y:.4g}<br>Qecon: %{z:.4g}<extra></extra>', name:'Qecon heatmap'};
+    var contourTraces = levels.map(function(L){
+      return {type:'contour', x:xs, y:ys, z:z, autocontour:false, contours:{start:L, end:L, size:1e-9, coloring:'lines', showlabels:false}, line:{color:'#111', width:2}, showscale:false, name:'Q = '+L, hoverinfo:'skip'};
+    });
+    var currentTrace = {type:'scatter', mode:'markers', name:'Current point', x:[curX], y:[curY], marker:{size:10},
+      hovertemplate:'Current<br>'+xp+': %{x:.4g}<br>'+yp+': %{y:.4g}<extra></extra>'};
+
+    var UNITS = {PfS:'MW/m²', tau_rep:'y', tau_life:'y', POE:'$/MWh', XS:'MW·y/m²', etaE:'—', cY:'$/MJ', MS_S:'M$/m²', MS_ON:'M$/m²', iRate:'%'};
+    var xLabel = (PARAMS[xi].lab || xp) + (UNITS[xp] ? ' ['+UNITS[xp]+']' : '');
+    var yLabel = (PARAMS[yi].lab || yp) + (UNITS[yp] ? ' ['+UNITS[yp]+']' : '');
+
+    var layout = {
+      title: {text:'Fusion Parameter Isoquants', x:0.5, xanchor:'center'},
+      xaxis: {title:xLabel, range:[fxmin, fxmax]},
+      yaxis: {title:yLabel, range:[fymin, fymax]},
+      margin: {l:70, r:20, t:70, b:90},
+      legend: {orientation:'h', x:0, y:-0.2, xanchor:'left', yanchor:'top', bgcolor:'rgba(255,255,255,0.8)', bordercolor:'#ccc', borderwidth:1}
+    };
+
+    var traces = [heat].concat(contourTraces, [currentTrace]).concat(projTraces);
+    Plotly.react(div, traces, layout, {responsive:true, displaylogo:false});
+  }
+
+  function install(){
+    // Monkey-patch scheduleDraw to also render Plotly (no changes to existing logic)
+    if (window._origScheduleDraw) return; // avoid double patch
+    window._origScheduleDraw = window.scheduleDraw;
+    window.scheduleDraw = function(){ try{ window._origScheduleDraw(); }catch(e){} renderPlotlyFromState(false); };
+
+    // Reset View re-fits to include all points
+    var rv = document.getElementById('btnResetView');
+    if (rv){
+      rv.addEventListener('click', function(){ renderPlotlyFromState(true); }, true);
+    }
+
+    
+    // Redraw on manual bound edits (strictly use typed bounds)
+    ['xmin','xmax','ymin','ymax'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el){
+        el.addEventListener('input', function(){ renderPlotlyFromState(false); }, true);
+      }
+    });
+// Initial render
+    renderPlotlyFromState(true);
+
+    // Keep plot updated if container resizes
+    window.addEventListener('resize', function(){ if (document.getElementById('plotlyOverlay')) Plotly.Plots.resize('plotlyOverlay'); });
+  }
+
+  if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', function(){ if (ensureReady()) install(); else setTimeout(install, 0); });
+  } else {
+    if (ensureReady()) install(); else setTimeout(install, 0);
+  }
+})();
+</script>
+
+
+<script id="tooltip-init">
+(function(){
+  function formatPresetTooltip(p){
+    if(!p) return '';
+    return [
+      'Pf/S='+p.PfS,
+      '\u03C4rep='+p.tau_rep,
+      '\u03C4life='+p.tau_life,
+      'POE='+p.POE,
+      'XS='+p.XS,
+      '\u03B7E='+p.etaE,
+      'cY='+p.cY,
+      'MS_S='+p.MS_S,
+      'MS_ON='+p.MS_ON,
+      'i='+p.iRate
+    ].join(', ');
+  }
+  function getPresets(){
+    try{
+      if (typeof PRESETS !== 'undefined') return PRESETS;
+      if (typeof window !== 'undefined' && window.PRESETS) return window.PRESETS;
+    }catch(e){}
+    return null;
+  }
+  function applyTooltips(){
+    var P = getPresets();
+
+    document.querySelectorAll('.preset-bar button').forEach(function(btn){
+      var key = btn.dataset.preset;
+      var p = P && P[key];
+      var label = btn.textContent.trim();
+      var text = p ? ('Preset "'+label+'": '+formatPresetTooltip(p)) : ('Preset "'+label+'"');
+      btn.setAttribute('data-tooltip', text);
+    });
+
+    var r = document.getElementById('btnReset');
+    if (r){
+      var txt = 'Reset to Nominal';
+      if (P && P['nominal']) txt += ': '+formatPresetTooltip(P['nominal']);
+      r.setAttribute('data-tooltip', txt);
+    }
+
+    var map = {
+      btnDownloadPNG: 'Download the current plot as a PNG image',
+      btnAxesPfS_XS: 'Quick axes: X = Pf/S, Y = XS; updates bounds',
+      btnAxesPfS_tau: 'Quick axes: X = \u03C4rep; updates bounds',
+      btnResetView: 'Reset view: fit axes to include all points and contours'
+    };
+    Object.keys(map).forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) el.setAttribute('data-tooltip', map[id]);
+    });
+  }
+  function init(){
+    if (document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', function(){
+        applyTooltips(); setTimeout(applyTooltips, 0);
+      });
+    } else {
+      applyTooltips(); setTimeout(applyTooltips, 0);
+    }
+  }
+  init();
+})();
+</script>
 </body>
 </html>
